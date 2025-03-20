@@ -131,8 +131,10 @@ func (batcher *Batcher) filter(log *oplog.PartialLog) bool {
 	}
 
 	if moveChunkFilter.Filter(log) {
-		LOG.Critical("shake exit, must close balancer in sharding + oplog")
-		LOG.Crashf("move chunk oplog found, must close balancer in sharding + oplog [%v]", log)
+		if !conf.Options.FilterIgnoreMoveChunk {
+			LOG.Critical("shake exit, must close balancer in sharding + oplog")
+			LOG.Crashf("move chunk oplog found, must close balancer in sharding + oplog [%v]", log)
+		}
 		return false
 	}
 
@@ -413,7 +415,8 @@ func (batcher *Batcher) setLastOplog() bool {
 
 // addIntoBatchGroup
 // isBarrier
-//     Barrier Oplogs(like DDL or Transaction) must execute sequentially and separately, send to batchGroup[0]
+//
+//	Barrier Oplogs(like DDL or Transaction) must execute sequentially and separately, send to batchGroup[0]
 func (batcher *Batcher) addIntoBatchGroup(genericLog *oplog.GenericOplog, isBarrier bool) {
 	if genericLog == fakeOplog {
 		return

@@ -11,5 +11,5 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/vinllen/go-diskqueue v1.0.2-0.20210318091137-9e570abf8db4
 	github.com/vinllen/log4go v0.0.0-20180514124125-3848a366df9d
-	go.mongodb.org/mongo-driver v1.9.0
+	go.mongodb.org/mongo-driver v1.10.0
 )
