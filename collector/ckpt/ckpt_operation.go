@@ -68,7 +68,7 @@ type MongoCheckpoint struct {
 func (ckpt *MongoCheckpoint) ensureNetwork() bool {
 	if ckpt.client == nil {
 		if client, err := utils.NewMongoCommunityConn(ckpt.URL, utils.VarMongoConnectModePrimary, true,
-			utils.ReadWriteConcernMajority, utils.ReadWriteConcernMajority,
+			utils.ReadWriteConcernLocal, utils.ReadWriteConcernLocal,
 			conf.Options.CheckpointStorageUrlMongoSslRootCaFile); err == nil {
 			ckpt.client = client
 
