@@ -266,18 +266,18 @@ func StartIndexSync(indexMap map[utils.NS][]bson.D, toUrl string,
 						if v.Key == "ns" || v.Key == "v" || v.Key == "background" {
 							continue
 						}
-						if fmt.Sprintf("%T", v.Value) == "bool" {
-							LOG.Warn("%s,index %v element: %s type is bool", ns.Str(), index.Map(), v.Key)
-							continue
+						if v.Key == "key" {
+							v.Value = utils.PurgeIllegalIndexElements(v.Value.(bson.D))
 						}
 						newIndex = append(newIndex, v)
 					}
 					newIndex = append(newIndex, primitive.E{Key: "background", Value: background})
-					if out := conn.Client.Database(toNS.Database).RunCommand(nil, bson.D{
+					var cIndexCmdParams = bson.D{
 						{"createIndexes", toNS.Collection},
 						{"indexes", []bson.D{newIndex}},
-					}); out.Err() != nil {
-						LOG.Warn("Create indexes for ns %v of dest mongodb failed. %v", ns, out.Err())
+					}
+					if out := conn.Client.Database(toNS.Database).RunCommand(nil, cIndexCmdParams); out.Err() != nil {
+						LOG.Warn("Create indexes for ns %v of dest mongodb failed. index: %v, err: %v", ns, cIndexCmdParams.Map(), out.Err())
 					}
 				}
 				LOG.Info("Create indexes for ns %v of dest mongodb finish", toNS)

@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -218,4 +219,24 @@ func HaveIdIndexKey(obj bson.D) bool {
 	}
 
 	return false
+}
+
+func GetIndexBody(indexFull bson.D) (bson.D, error) {
+	for _, ele := range indexFull {
+		if ele.Key == "key" {
+			return ele.Value.(bson.D), nil
+		}
+	}
+	return nil, errors.New("index content not found")
+}
+
+func PurgeIllegalIndexElements(indexContent bson.D) bson.D {
+	newKeyElements := bson.D{}
+	for _, fieldEle := range indexContent {
+		if fmt.Sprintf("%T", fieldEle.Value) == "bool" {
+			continue
+		}
+		newKeyElements = append(newKeyElements, fieldEle)
+	}
+	return newKeyElements
 }
