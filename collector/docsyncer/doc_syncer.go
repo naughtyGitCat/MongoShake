@@ -266,6 +266,10 @@ func StartIndexSync(indexMap map[utils.NS][]bson.D, toUrl string,
 						if v.Key == "ns" || v.Key == "v" || v.Key == "background" {
 							continue
 						}
+						if fmt.Sprintf("%T", v.Value) == "bool" {
+							LOG.Warn("%s,index %v element: %s type is bool", ns.Str(), index.Map(), v.Key)
+							continue
+						}
 						newIndex = append(newIndex, v)
 					}
 					newIndex = append(newIndex, primitive.E{Key: "background", Value: background})
