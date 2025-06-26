@@ -276,6 +276,7 @@ func StartIndexSync(indexMap map[utils.NS][]bson.D, toUrl string,
 						{"createIndexes", toNS.Collection},
 						{"indexes", []bson.D{newIndex}},
 					}
+					LOG.Debug("Create index for collection [%s], %v", toNS.Collection, cIndexCmdParams)
 					if out := conn.Client.Database(toNS.Database).RunCommand(nil, cIndexCmdParams); out.Err() != nil {
 						LOG.Warn("Create indexes for ns %v of dest mongodb failed. index: %v, err: %v", ns, cIndexCmdParams.Map(), out.Err())
 					}
